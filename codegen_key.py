@@ -25,7 +25,7 @@ def ctrl_key(key):
 def on_click(icon, item):
     if str(item) == 'Назначить горячие клавиши':
         print('Ты чё тут делаешь?')
-    elif str(item) == 'Выход':
+    elif str(item) == 'Exit':
         icon.stop()
 
 tray_main = PIL.Image.open('eblo.png') # Program logo is under construction
@@ -33,7 +33,7 @@ tray_progress = PIL.Image.open('logo.png')
 
 icon = pystray.Icon('AIcGen', tray_main, menu=pystray.Menu(
         pystray.MenuItem('Назначить горячие клавиши', on_click),
-        pystray.MenuItem('Выход', on_click)
+        pystray.MenuItem('Exit', on_click)
 )) # Program title is under construction
 
 def tray_init():
