@@ -28,8 +28,8 @@ def on_click(icon, item):
     elif str(item) == 'Exit':
         icon.stop()
 
-tray_main = PIL.Image.open('eblo.png') # Program logo is under construction
-tray_progress = PIL.Image.open('logo.png')
+tray_main = PIL.Image.open('main_logo.png')
+tray_progress = PIL.Image.open('processing.png')
 
 icon = pystray.Icon('AIcGen', tray_main, menu=pystray.Menu(
         pystray.MenuItem('Назначить горячие клавиши', on_click),
