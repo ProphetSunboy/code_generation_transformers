@@ -91,30 +91,12 @@ def show_help():
 
 root = Tk()
 root.geometry('900x450')
+root.title("AIcGEN")
+root.iconbitmap(default="icons/main_logo.ico")
+root.config(background='lightgray')
 
-# remove title bar
-root.overrideredirect(True)
 
-def move_app(e):
-    root.geometry(f'+{e.x_root}+{e.y_root}')
-
-# create fake title bar
-title_bar = Frame(root, bg='darkgreen')
-title_bar.pack(expand=1, fill=X)
-
-# Bind the title bar
-title_bar.bind('<B1-Motion>', move_app)
-
-# Create title text
-title_label = Label(title_bar, text='   AIcGen', bg='darkgreen', fg='white')
-title_label.pack(side=LEFT, pady=4)
-
-# Create close button on titel bar
-close_button = Button(title_bar, text='  X  ', command=root.destroy, bg='darkgreen', fg='white')
-close_button.pack(side=RIGHT, pady=4)
-
-number_of_tokens_label = Label(
-    root,
+number_of_tokens_lbl = Label(
     text="Количество токенов:        ", # Длина генерируемой последовательности в символах
     font= ('Arial', 12),
     background='white',
@@ -122,17 +104,13 @@ number_of_tokens_label = Label(
     highlightcolor='black',
     highlightthickness=1,
 )
-number_of_tokens_label.pack(side=LEFT, padx=4, pady=(10, 380))
 
 number_of_tokens_entry = Entry(
-    root,
     font= ('Arial', 12),
-    width=20,
+    width=3,
 )
-number_of_tokens_entry.pack(padx=(0, 680), pady=(10, 380))
 
 temperature_lbl = Label(
-    root,
     text="Температура генерации: ",
     font= ('Arial', 12),
     background='white',
@@ -142,7 +120,6 @@ temperature_lbl = Label(
 )
 
 temperature_entry = Entry(
-    root,
     font= ('Arial', 12),
     width=4,
 )
@@ -151,10 +128,63 @@ cb_frame = Frame(root, bg='white', bd=2)
 
 lbl = Label(cb_frame, text='Py',background='white',)
 
-# scroll_sentences = Scrollbar(command=sentences_tf.yview)
-# sentences_tf.config(yscrollcommand=scroll_sentences.set)
+number_of_tokens_lbl.grid(row=0, column=0)
+number_of_tokens_entry.grid(row=0, column=1)
 
-# scroll_pred = Scrollbar(command=sentences_tf.yview)
-# sentences_tf.config(yscrollcommand=scroll_pred.set)
+temperature_lbl.grid(row=1, column=0)
+temperature_entry.grid(row=1, column=1)
+
+cb_frame.grid(row=0, column=2)
+lbl.pack(anchor=NW)
+
+#number_of_tokens_lbl.pack(anchor=NW, padx=8, pady=8)
+#number_of_tokens_entry.pack(anchor=NW, padx=200, pady=8)
+
+sentences_lb = Label(
+    text="Введите текст дла анализа\n"
+        "(следующий элемент начинать c новой строки)",
+    font=20,
+)
+
+predictions_lb = Label(
+    text="Результаты анализа",
+    font=20,
+)
+
+sentences_tf = Text(
+    width=80,
+    height=16,
+)
+
+predictions_tf = Text(
+    width=16,
+    height=16,
+)
+
+analyze_btn = Button(
+    text='Анализировать',
+    font=20,
+    command=analyze_sentences,
+)
+
+model_type = IntVar()
+model_type.set(0)
+
+output_type = BooleanVar()
+output_type.set(0)
+
+
+help_btn = Button(
+    text='Помощь',
+    width=8,
+    height=2,
+    command=show_help
+)
+
+scroll_sentences = Scrollbar(command=sentences_tf.yview)
+sentences_tf.config(yscrollcommand=scroll_sentences.set)
+
+scroll_pred = Scrollbar(command=sentences_tf.yview)
+sentences_tf.config(yscrollcommand=scroll_pred.set)
 
 root.mainloop()
