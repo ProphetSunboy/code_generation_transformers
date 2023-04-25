@@ -93,10 +93,10 @@ root = Tk()
 root.geometry('900x450')
 root.title("AIcGEN")
 root.iconbitmap(default="icons/main_logo.ico")
-root.config(background='lightgray')
+# root.config(background='lightgray')
 
 
-number_of_tokens_lbl = Label(
+number_of_tokens_label = Label(
     text="Количество токенов:        ", # Длина генерируемой последовательности в символах
     font= ('Arial', 12),
     background='white',
@@ -104,38 +104,72 @@ number_of_tokens_lbl = Label(
     highlightcolor='black',
     highlightthickness=1,
 )
+number_of_tokens_label.pack(side=LEFT, anchor=NW, padx=4, pady=10)
 
 number_of_tokens_entry = Entry(
     font= ('Arial', 12),
     width=3,
 )
+number_of_tokens_entry.pack(side=LEFT,anchor=N, padx=4, pady=10)
 
-temperature_lbl = Label(
+temperature_label = Label(
     text="Температура генерации: ",
-    font= ('Arial', 12),
+    font= ('Arial', 10),
     background='white',
     highlightbackground="black",
     highlightcolor='black',
     highlightthickness=1,
 )
+temperature_label.pack(side=LEFT,anchor=N, padx=4, pady=10)
 
 temperature_entry = Entry(
-    font= ('Arial', 12),
+    font= ('Arial', 10),
     width=4,
 )
+temperature_entry.pack(side=LEFT, anchor=N, padx=4, pady=10)
+
+python = IntVar()
+js = IntVar()
+c_2plus = IntVar()
+c_lang = IntVar()
+go_lang = IntVar()
+java = IntVar()
+
+python_checkbutton = ttk.Checkbutton(text='Python', variable=python)
+python_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+lbl = ttk.Label(textvariable=python)
+lbl.pack(side=BOTTOM)
+
+js_checkbutton = ttk.Checkbutton(text='JavaScript', variable=js)
+js_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+
+c_2plus_checkbutton = ttk.Checkbutton(text='C++', variable=c_2plus)
+c_2plus_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+
+c_lang_checkbutton = ttk.Checkbutton(text='C', variable=c_lang)
+c_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+
+go_lang_checkbutton = ttk.Checkbutton(text='Go', variable=go_lang)
+go_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+
+java_checkbutton = ttk.Checkbutton(text='Java', variable=java)
+java_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
 
 cb_frame = Frame(root, bg='white', bd=2)
 
 lbl = Label(cb_frame, text='Py',background='white',)
 
-number_of_tokens_lbl.grid(row=0, column=0)
-number_of_tokens_entry.grid(row=0, column=1)
 
-temperature_lbl.grid(row=1, column=0)
-temperature_entry.grid(row=1, column=1)
 
-cb_frame.grid(row=0, column=2)
-lbl.pack(anchor=NW)
+
+# number_of_tokens_label.grid(row=0, column=0)
+# number_of_tokens_entry.grid(row=0, column=1)
+
+# temperature_label.grid(row=1, column=0)
+# temperature_entry.grid(row=1, column=1)
+
+# cb_frame.grid(row=0, column=2)
+# lbl.pack(anchor=NW)
 
 #number_of_tokens_lbl.pack(anchor=NW, padx=8, pady=8)
 #number_of_tokens_entry.pack(anchor=NW, padx=200, pady=8)
