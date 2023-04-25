@@ -95,38 +95,44 @@ root.title("AIcGEN")
 root.iconbitmap(default="icons/main_logo.ico")
 # root.config(background='lightgray')
 
+parameters = Frame(root)
+parameters.pack(expand=1, fill=X, padx=(0, 0), pady=(0, 20))
 
 number_of_tokens_label = Label(
+    parameters,
     text="Количество токенов:        ", # Длина генерируемой последовательности в символах
-    font= ('Arial', 12),
+    font= ('Arial', 11),
     background='white',
     highlightbackground="black",
     highlightcolor='black',
     highlightthickness=1,
 )
-number_of_tokens_label.pack(side=LEFT, anchor=NW, padx=4, pady=10)
+number_of_tokens_label.pack(side=LEFT, anchor=NW, padx=(20, 1))
 
 number_of_tokens_entry = Entry(
-    font= ('Arial', 12),
+    parameters,
+    font= ('Arial', 11),
     width=3,
 )
-number_of_tokens_entry.pack(side=LEFT,anchor=N, padx=4, pady=10)
+number_of_tokens_entry.pack(side=LEFT,anchor=N, padx=0, pady=(1, 0))
 
 temperature_label = Label(
+    parameters,
     text="Температура генерации: ",
-    font= ('Arial', 10),
+    font= ('Arial', 11),
     background='white',
     highlightbackground="black",
     highlightcolor='black',
     highlightthickness=1,
 )
-temperature_label.pack(side=LEFT,anchor=N, padx=4, pady=10)
+temperature_label.pack(side=LEFT,anchor=N, padx=(10, 1))
 
 temperature_entry = Entry(
-    font= ('Arial', 10),
+    parameters,
+    font= ('Arial', 11),
     width=4,
 )
-temperature_entry.pack(side=LEFT, anchor=N, padx=4, pady=10)
+temperature_entry.pack(side=LEFT, anchor=N, padx=0, pady=(1, 0))
 
 python = IntVar()
 js = IntVar()
@@ -135,44 +141,79 @@ c_lang = IntVar()
 go_lang = IntVar()
 java = IntVar()
 
-python_checkbutton = ttk.Checkbutton(text='Python', variable=python)
-python_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
-lbl = ttk.Label(textvariable=python)
-lbl.pack(side=BOTTOM)
+python_checkbutton = ttk.Checkbutton(parameters,text='Python', variable=python)
+python_checkbutton.pack(side=LEFT, anchor=N, padx=(80, 4))
 
-js_checkbutton = ttk.Checkbutton(text='JavaScript', variable=js)
-js_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+js_checkbutton = ttk.Checkbutton(parameters,text='JavaScript', variable=js)
+js_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
-c_2plus_checkbutton = ttk.Checkbutton(text='C++', variable=c_2plus)
-c_2plus_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+c_2plus_checkbutton = ttk.Checkbutton(parameters,text='C++', variable=c_2plus)
+c_2plus_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
-c_lang_checkbutton = ttk.Checkbutton(text='C', variable=c_lang)
-c_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+c_lang_checkbutton = ttk.Checkbutton(parameters,text='C', variable=c_lang)
+c_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
-go_lang_checkbutton = ttk.Checkbutton(text='Go', variable=go_lang)
-go_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+go_lang_checkbutton = ttk.Checkbutton(parameters,text='Go', variable=go_lang)
+go_lang_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
-java_checkbutton = ttk.Checkbutton(text='Java', variable=java)
-java_checkbutton.pack(side=LEFT, anchor=N, padx=4, pady=10)
+java_checkbutton = ttk.Checkbutton(parameters,text='Java', variable=java)
+java_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
-cb_frame = Frame(root, bg='white', bd=2)
+text_boxes = Frame(root)
 
-lbl = Label(cb_frame, text='Py',background='white',)
+input_frame = Frame(text_boxes)
+output_frame = Frame(text_boxes)
+text_boxes.pack()
+input_frame.pack(side=LEFT)
+output_frame.pack(side=LEFT)
 
+input_label = Label(
+    input_frame,
+    text="Введите функцию: ",
+    font= ('Arial', 11),
+)
+input_label.pack(anchor=NW, padx=(20, 0), pady=(0, 0))
 
+output_label = Label(
+    output_frame,
+    text="Результат генерации: ",
+    font= ('Arial', 11),
+)
+output_label.pack(anchor=NE, padx=(0, 235), pady=(0, 0))
 
+input_txt = Text(input_frame, width=46, height=14, wrap=NONE)
+input_txt.pack(side=LEFT,anchor=NW, padx=(20, 0), pady=(0, 0))
 
-# number_of_tokens_label.grid(row=0, column=0)
-# number_of_tokens_entry.grid(row=0, column=1)
+output_txt = Text(output_frame, width=46, height=14, wrap=NONE)
+output_txt.pack(anchor=NE, padx=20, pady=(0, 0))
 
-# temperature_label.grid(row=1, column=0)
-# temperature_entry.grid(row=1, column=1)
+generate_button = Button(
+    root,
+    text='Сгенерировать код',
+    width=20,
+    height=2,
+    command=analyze_sentences,
+)
+generate_button.pack(anchor=S, padx=(0, 0), pady=(10, 0))
 
-# cb_frame.grid(row=0, column=2)
-# lbl.pack(anchor=NW)
+help_button = Button(
+    root, 
+    text='Помощь',
+    width=8,
+    height=2,
+    command=show_help
+)
+help_button.pack(anchor=SE, padx=(0, 8), pady=(0, 8))
 
-#number_of_tokens_lbl.pack(anchor=NW, padx=8, pady=8)
-#number_of_tokens_entry.pack(anchor=NW, padx=200, pady=8)
+scroll_input_y = Scrollbar(command=input_txt.yview)
+scroll_input_x = Scrollbar(command=input_txt.xview)
+input_txt.config(yscrollcommand=scroll_input_y.set, xscrollcommand=scroll_input_x)
+
+scroll_output_y = Scrollbar(command=input_txt.yview)
+scroll_output_x = Scrollbar(command=input_txt.xview)
+input_txt.config(yscrollcommand=scroll_output_y.set, xscrollcommand=scroll_output_x)
+
+root.mainloop()
 
 sentences_lb = Label(
     text="Введите текст дла анализа\n"
@@ -206,19 +247,3 @@ model_type.set(0)
 
 output_type = BooleanVar()
 output_type.set(0)
-
-
-help_btn = Button(
-    text='Помощь',
-    width=8,
-    height=2,
-    command=show_help
-)
-
-scroll_sentences = Scrollbar(command=sentences_tf.yview)
-sentences_tf.config(yscrollcommand=scroll_sentences.set)
-
-scroll_pred = Scrollbar(command=sentences_tf.yview)
-sentences_tf.config(yscrollcommand=scroll_pred.set)
-
-root.mainloop()
