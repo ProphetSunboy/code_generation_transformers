@@ -7,7 +7,53 @@ from tkinter import ttk
 import numpy as np
 import pandas as pd
 
-def analyze_sentences():
+from codegen import generate_code
+
+def generate():
+    correct_inputs = True
+    try:
+        max_tokens = int(number_of_tokens_entry.get().strip())
+        temperature = float(temperature_entry.get().strip())
+    except ValueError:
+        messagebox.showinfo('Некорректные данные',
+            'Количество токенов и температура генерации должны быть числовыми')
+        correct_inputs = False
+
+    input_seq = input_txt.get().strip()
+    if len(input_seq) == 0:
+        messagebox.showinfo('Пустой ввод',
+                            'Пожалуйста введите сигнатуру функции')
+        correct_inputs = False
+
+    if correct_inputs:
+        output_txt.delete('1.0', END)
+        splitted_input = input_seq.split(' ', maxsplit=1)
+
+        if python.get() == 1:
+            output_txt.insert(END, '\n\nPython:\n')
+            generate_code(,max_tokens, temperature)
+
+        if js.get() == 1:
+            output_txt.insert(END, '\n\JavaScript:\n')
+            generate_code(,max_tokens, temperature)
+
+        if c_2plus.get() == 1:
+            output_txt.insert(END, '\n\C++:\n')
+            generate_code(,max_tokens, temperature)
+
+        if c_lang.get() == 1:
+            output_txt.insert(END, '\n\C:\n')
+            generate_code(,max_tokens, temperature)
+
+        if go_lang.get() == 1:
+            output_txt.insert(END, '\n\Go:\n')
+            generate_code(,max_tokens, temperature)
+
+        if java.get() == 1:
+            output_txt.insert(END, '\n\Java:\n')
+            generate_code(,max_tokens, temperature)
+
+        generate_code(input_seq, max_tokens, temperature)
     pass
     # predictions_tf.delete(1.0, END)
     # sentences = sentences_tf.get(1.0, END).split('\n')
@@ -52,27 +98,6 @@ def analyze_sentences():
     #         else:
     #             messagebox.showinfo('Среднее', 'Нейтрально')
 
-
-def analyze_csv():
-    pass
-    # file_name = fd.askopenfilename(filetypes=(('CSV files', '*.csv'),))
-
-    # df = pd.read_csv(file_name, names=['text'], skiprows=1)
-    # text_list = df['text'].to_list()
-
-    # if model_type.get() == 0:
-    #     predictions = model_ru.predict(np.array(text_list))
-    # else:
-    #     predictions = model.predict(np.array(text_list))
-
-    # sentiment_df = pd.DataFrame(
-    #     [[text_list[i], predictions[i][0]] for i in range(len(text_list))],
-    #     columns=['text', 'sentiment'],
-    # )
-
-    # sentiment_df.to_csv(file_name, index=False)
-
-    # messagebox.showinfo('Результат', 'Успешно')
 
 def show_help():
     messagebox.showinfo('Помощь', 'Язык анализа следует выбирать исходя '
@@ -214,36 +239,3 @@ scroll_output_x = Scrollbar(command=input_txt.xview)
 input_txt.config(yscrollcommand=scroll_output_y.set, xscrollcommand=scroll_output_x)
 
 root.mainloop()
-
-sentences_lb = Label(
-    text="Введите текст дла анализа\n"
-        "(следующий элемент начинать c новой строки)",
-    font=20,
-)
-
-predictions_lb = Label(
-    text="Результаты анализа",
-    font=20,
-)
-
-sentences_tf = Text(
-    width=80,
-    height=16,
-)
-
-predictions_tf = Text(
-    width=16,
-    height=16,
-)
-
-analyze_btn = Button(
-    text='Анализировать',
-    font=20,
-    command=analyze_sentences,
-)
-
-model_type = IntVar()
-model_type.set(0)
-
-output_type = BooleanVar()
-output_type.set(0)
