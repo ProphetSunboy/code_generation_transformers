@@ -4,28 +4,51 @@ from tkinter import ttk
 
 from codegen import generate_code
 
-def replace_datatypes(str):
+def remove_datatypes(str):
+    '''
+    remove_datatypes(str)
+        Return str without datatypes.
+    '''
     data_types = ['string', 'int', 'bool', 'char', 'float', 'double']
     return ', '.join([word for word in ''.join(str.split(',')).split() if word.lower() not in data_types])
 
 def split_outputs():
+    '''
+    Function to separate outputs.
+    '''
     return '\n\n_______________________________\n\n'
 
 def format_f_name(f_name, lang='not py'):
+    '''
+    format_f_name(f_name, lang='not py')
+        Function returns a properly formatted function name,
+        depending on the lang.
+    '''
     if lang == 'py':
         if '_' in f_name:
             return f_name
+        # 'greetUser' -> 'greet_user'
         return ''.join([f_name[i].lower() if f_name[i+1].islower() else f_name[i].lower() + '_' for i in range(len(f_name)-1)]) + f_name[-1]
     else:
         if '_' not in f_name:
             return f_name
+        # 'greet_user' -> 'greetUser'
         return ''.join([word[0].upper() + word[1:] if i != 0 else word for i, word in enumerate(f_name.split('_'))])
 
 def parse_input(text):
+    '''
+    parse_input(text)
+        return properly parsed input sequence i.e.
+        parse_input('def greet_user(username):') ->
+        -> {'Py': 'def greet_user(username):',
+            'JS': 'function greetUser(username){',
+            ...
+            }
+    '''
     function_name, params = text.split(':')[0].split('{')[0].split('(')
     function_name = function_name.split(' ')[-1]
     params = params.split(')')[0]
-    formatted_params = replace_datatypes(params)
+    formatted_params = remove_datatypes(params)
 
     python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):'
     js = f'function {format_f_name(function_name)}({formatted_params})' + '{'
@@ -40,9 +63,14 @@ def parse_input(text):
     return signatures
 
 def generate():
+    '''
+    Function check inputs for correctness and perform
+    code generation in selected programming languages.
+    '''
     correct_inputs = True
 
     try:
+        # slicing [:3] needed to limit input n_tokens
         n_tokens = int(number_of_tokens_entry.get().strip()[:3])
         temperature_inp = round(float(temperature_entry.get().strip()), 2)
     except ValueError:
@@ -90,6 +118,9 @@ def generate():
             output_txt.insert(END, generate_code(signatures.get('Java'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
 def show_help():
+    '''
+    Show info about program in messagebox
+    '''
     messagebox.showinfo('Помощь',
                 'Количество токенов это длина генерируемой\n'
                 'последовательности в символах\n'
@@ -173,10 +204,11 @@ java_checkbutton = ttk.Checkbutton(parameters,text='Java', variable=java)
 java_checkbutton.pack(side=LEFT, anchor=N, padx=4)
 
 text_boxes = Frame(root)
+text_boxes.pack()
 
 input_frame = Frame(text_boxes)
 output_frame = Frame(text_boxes)
-text_boxes.pack()
+
 input_frame.pack(side=LEFT)
 output_frame.pack(side=LEFT)
 
