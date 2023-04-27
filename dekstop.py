@@ -6,15 +6,26 @@ from tkinter import ttk
 
 import numpy as np
 import pandas as pd
+import re
 
 from codegen import generate_code
 
 def replace_datatypes(str):
     data_types = ['string', 'int', 'bool', 'char', 'float', 'double']
-    return ', '.join([word for word in str.split() if word.lower() not in data_types])
+    return ', '.join([word for word in ''.join(str.split(',')).split() if word.lower() not in data_types])
 
 def split_outputs():
-    return '\n\n_______________________________'
+    return '\n\n_______________________________\n\n'
+
+def format_f_name(f_name, lang='not py'):
+    if lang == 'py':
+        if '_' in f_name:
+            return f_name
+        return ''.join([f_name[i].lower() if f_name[i+1].islower() else f_name[i].lower() + '_' for i in range(len(f_name)-1)]) + f_name[-1]
+    else:
+        if '_' not in f_name:
+            return f_name
+        return ''.join([word[0].upper() + word[1:] if i != 0 else word for i, word in enumerate(f_name.split('_'))])
 
 def parse_input(text):
     function_name, params = text.split(':')[0].split('{')[0].split('(')
@@ -22,12 +33,12 @@ def parse_input(text):
     params = params.split(')')[0]
     formatted_params = replace_datatypes(params)
 
-    python = f'def {function_name}({formatted_params}):'
-    js = f'function {function_name}({formatted_params})' + '{'
-    c_2plus = 'void greetUser(username){'#f'void {function_name}({params})' + '{'
-    c_lang = f'#include <stdio.h>\nvoid {function_name}({params})' + '{'
-    go_lang = f'func {function_name}({params})' + '{'
-    java = f'public void {function_name}({params})' + '{'
+    python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):'
+    js = f'function {format_f_name(function_name)}({formatted_params})' + '{'
+    c_2plus = f'void {format_f_name(function_name)}({params})' + '{'
+    c_lang = f'#include <stdio.h>\nvoid {format_f_name(function_name)}({params})' + '{'
+    go_lang = f'func {format_f_name(function_name)}({params})' + ' {'
+    java = f'public void {format_f_name(function_name)}({params})' + '{'
 
     signatures = {'Py': python, 'JS': js, 'C++': c_2plus,
                   'C': c_lang, 'Go': go_lang, 'Java': java}
@@ -51,10 +62,15 @@ def generate():
                             'Пожалуйста введите сигнатуру функции')
         correct_inputs = False
 
+    try:    
+        signatures = parse_input(input_seq)
+    except ValueError:
+        messagebox.showerror('Ошибка ввода', 'Введённая функция некорректна')
+        correct_inputs = False
+
     if correct_inputs:
         output_txt.delete('1.0', END)
-        signatures = parse_input(input_seq)
-
+        
         if python.get() == 1:
             output_txt.insert(END, 'Python:\n')
             output_txt.insert(END, generate_code(signatures.get('Py'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
