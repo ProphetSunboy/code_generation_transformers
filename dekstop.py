@@ -13,16 +13,18 @@ def replace_datatypes(str):
     data_types = ['string', 'int', 'bool', 'char', 'float', 'double']
     return ', '.join([word for word in str.split() if word.lower() not in data_types])
 
-def parse_input(text):
+def split_outputs():
+    return '\n\n_______________________________'
 
+def parse_input(text):
     function_name, params = text.split(':')[0].split('{')[0].split('(')
-    function_name = function_name.split(' ')[1]
+    function_name = function_name.split(' ')[-1]
     params = params.split(')')[0]
     formatted_params = replace_datatypes(params)
 
-    python = replace_datatypes(f'def {function_name}({formatted_params}):')
-    js = replace_datatypes(f'function {function_name}({formatted_params})' + '{')
-    c_2plus = f'void {function_name}({params})' + '{' 
+    python = f'def {function_name}({formatted_params}):'
+    js = f'function {function_name}({formatted_params})' + '{'
+    c_2plus = 'void greetUser(username){'#f'void {function_name}({params})' + '{'
     c_lang = f'#include <stdio.h>\nvoid {function_name}({params})' + '{'
     go_lang = f'func {function_name}({params})' + '{'
     java = f'public void {function_name}({params})' + '{'
@@ -34,17 +36,18 @@ def parse_input(text):
 
 def generate():
     correct_inputs = True
+
     try:
-        max_tokens = int(number_of_tokens_entry.get().strip())
-        temperature = round(float(temperature_entry.get().strip()), 2)
+        n_tokens = int(number_of_tokens_entry.get().strip())
+        temperature_inp = round(float(temperature_entry.get().strip()), 2)
     except ValueError:
-        messagebox.showinfo('Некорректные данные',
-            'Количество токенов и температура генерации должны быть числовыми')
+        messagebox.showwarning('Некорректные данные',
+            'Количество токенов и температура генерации должны\nбыть числовыми')
         correct_inputs = False
 
     input_seq = input_txt.get('1.0', END).strip()
     if len(input_seq) == 0:
-        messagebox.showinfo('Пустой ввод',
+        messagebox.showwarning('Пустой ввод',
                             'Пожалуйста введите сигнатуру функции')
         correct_inputs = False
 
@@ -53,56 +56,54 @@ def generate():
         signatures = parse_input(input_seq)
 
         if python.get() == 1:
-            output_txt.insert(END, '\n\nPython:\n')
-            output_txt.insert(END, generate_code(signatures.get('Py'), max_tokens, temperature))
+            output_txt.insert(END, 'Python:\n')
+            output_txt.insert(END, generate_code(signatures.get('Py'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
         if js.get() == 1:
-            output_txt.insert(END, '\n\nJavaScript:\n')
-            output_txt.insert(END, generate_code(signatures.get('JS'), max_tokens, temperature))
+            output_txt.insert(END, 'JavaScript:\n')
+            output_txt.insert(END, generate_code(signatures.get('JS'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
         if c_2plus.get() == 1:
-            output_txt.insert(END, '\n\nC++:\n')
-            output_txt.insert(END, generate_code(signatures.get('C++'), max_tokens, temperature))
+            output_txt.insert(END, 'C++:\n')
+            output_txt.insert(END, generate_code(signatures.get('C++'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
         if c_lang.get() == 1:
-            output_txt.insert(END, '\n\nC:\n')
-            output_txt.insert(generate_code(signatures.get('C'), max_tokens, temperature))
+            output_txt.insert(END, 'C:\n')
+            output_txt.insert(END, generate_code(signatures.get('C'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
         if go_lang.get() == 1:
-            output_txt.insert(END, '\n\nGo:\n')
-            output_txt.insert(generate_code(signatures.get('Go'), max_tokens, temperature))
+            output_txt.insert(END, 'Go:\n')
+            output_txt.insert(END, generate_code(signatures.get('Go'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
         if java.get() == 1:
-            output_txt.insert(END, '\n\nJava:\n')
-            output_txt.insert(generate_code(signatures.get('Java'), max_tokens, temperature))
+            output_txt.insert(END, 'Java:\n')
+            output_txt.insert(END, generate_code(signatures.get('Java'), max_tokens=n_tokens, temperature=temperature_inp) + split_outputs())
 
 def show_help():
-    messagebox.showinfo('Помощь', 'Язык анализа следует выбирать исходя '
-        'из языка анализируемого текста.\n'
-        'Формат вывода определяет в каком виде будет '
-        'показан результат: числовом или словесном.\n'
-        'Для получения результата необходимо в поле '
-        'анализа ввести текст и нажать на кнопку "Анализировать".\n'
-        'При выборе ".csv" файла результат, после анализа, '
-        'автоматически запишется в этот файл.\n'
-        'Файл должен содержать единственный столбец с анализируемым текстом.\n'
-        'После анализа, в тот же файл, добавится второй '
-        'столбец с результатами.\n'
-        'При работе с ".csv" файлом всегда используется формат вывода "Точный"'
+    messagebox.showinfo('Помощь',
+                'Количество токенов это длина генерируемой\n'
+                'последовательности в символах\n'
+                'Температура генерации это коэффициент случайности\n'
+                'генерации (меньшие значения соответствуют более\n'
+                'стабильной генерации).\n'
+                'Код выбранных языков программирования в процессе\n'
+                'генерации будет появляться в поле "Результат генерации"\n'
+                'Для получения результата генерации необходимо в поле\n'
+                '"Введите функцию" ввести сигнатуру функции и нажать\n'
+                'на кнопку "Сгенерировать код".'
     )
 
 root = Tk()
 root.geometry('900x450')
 root.title("AIcGEN")
 root.iconbitmap(default="icons/main_logo.ico")
-# root.config(background='lightgray')
 
 parameters = Frame(root)
 parameters.pack(expand=1, fill=X, padx=(0, 0), pady=(0, 20))
 
 number_of_tokens_label = Label(
     parameters,
-    text="Количество токенов:        ", # Длина генерируемой последовательности в символах
+    text="Количество токенов:        ",
     font= ('Arial', 11),
     background='white',
     highlightbackground="black",
