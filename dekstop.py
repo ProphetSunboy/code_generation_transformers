@@ -1,12 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
-from PIL import ImageTk
-from tkinter import filedialog as fd
 from tkinter import ttk
-
-import numpy as np
-import pandas as pd
-import re
 
 from codegen import generate_code
 
@@ -49,7 +43,7 @@ def generate():
     correct_inputs = True
 
     try:
-        n_tokens = int(number_of_tokens_entry.get().strip())
+        n_tokens = int(number_of_tokens_entry.get().strip()[:3])
         temperature_inp = round(float(temperature_entry.get().strip()), 2)
     except ValueError:
         messagebox.showwarning('Некорректные данные',
