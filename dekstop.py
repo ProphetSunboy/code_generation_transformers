@@ -136,7 +136,7 @@ def show_help():
 
 root = Tk()
 root.geometry('900x450')
-root.title("AIcGEN")
+root.title("Генерация кода")
 root.iconbitmap(default="icons/main_logo.ico")
 
 parameters = Frame(root)
