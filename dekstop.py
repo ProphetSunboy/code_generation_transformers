@@ -38,8 +38,8 @@ def format_f_name(f_name, lang='not py'):
 def parse_input(text):
     '''
     parse_input(text)
-        return properly parsed input sequence i.e.
-        parse_input('def greet_user(username):') ->
+        return properly parsed input sequence for different programming
+        languages i.e. parse_input('def greet_user(username):') ->
         -> {'Py': 'def greet_user(username):',
             'JS': 'function greetUser(username){',
             ...
