@@ -48,17 +48,19 @@ def parse_input(text):
             }
     '''
     function_name, params = text.split(':')[0].split('{')[0].split('(')
-    #comments = text.split(':')[1].strip() or text.split('{')[1].strip() # Add comments to the end of the languages
+    comments = (text.split('\n', maxsplit=1) + [''])[1].strip().replace("'''", '').replace('//', '').replace('\t', '').split('\n')
+    py_comments = '\n    '.join(comments)
+    other_comments = '\n    '.join('// ' + line for line in comments if line)
     function_name = function_name.split(' ')[-1]
     params = params.split(')')[0]
     formatted_params = remove_datatypes(params)
 
-    python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):'
-    js = f'function {format_f_name(function_name)}({formatted_params})' + '{'
-    c_2plus = f'void {format_f_name(function_name)}({params})' + '{'
-    c_lang = f'#include <stdio.h>\nvoid {format_f_name(function_name)}({params})' + '{'
-    go_lang = f'func {format_f_name(function_name)}({params})' + ' {'
-    java = f'public void {format_f_name(function_name)}({params})' + '{'
+    python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):' + f"\n    '''{py_comments}'''" * (len(py_comments) != 0)
+    js = f'function {format_f_name(function_name)}({formatted_params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
+    c_2plus = f'void {format_f_name(function_name)}({params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
+    c_lang = f'#include <stdio.h>\nvoid {format_f_name(function_name)}({params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
+    go_lang = f'func {format_f_name(function_name)}({params})' + ' {' + f'\n    {other_comments}' * (len(other_comments) != 0)
+    java = f'public void {format_f_name(function_name)}({params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
 
     signatures = {'Py': python, 'JS': js, 'C++': c_2plus,
                   'C': c_lang, 'Go': go_lang, 'Java': java}
@@ -126,7 +128,7 @@ def show_help():
     '''
     messagebox.showinfo('Помощь',
                 'Количество токенов это длина генерируемой\n'
-                'последовательности в символах (ограничене 999 символами)\n'
+                'последовательности в символах (ограничено 999 символами)\n'
                 'Температура генерации это коэффициент случайности\n'
                 'генерации (меньшие значения соответствуют более\n'
                 'стабильной генерации).\n'
