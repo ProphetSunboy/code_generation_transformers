@@ -1,10 +1,3 @@
-import keyboard
-import pyperclip
-import time
-import PIL.Image
-import pystray
-from threading import Thread
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 checkpoint = "Salesforce/codegen-350M-multi"

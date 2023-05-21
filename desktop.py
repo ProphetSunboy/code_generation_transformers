@@ -1,8 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
-from tkinter import ttk
 import customtkinter as ctk
-from PIL import Image
 
 from codegen import generate_code
 
@@ -18,7 +16,7 @@ def split_outputs():
     '''
     Function to separate outputs.
     '''
-    return f'\n\n{"_"*90}\n\n'
+    return f'\n\n{"_"*97}\n\n'
 
 def format_f_name(f_name, lang='not py'):
     '''
@@ -48,14 +46,14 @@ def parse_input(text):
             }
     '''
     function_name, params = text.split(':')[0].split('{')[0].split('(')
-    comments = (text.split('\n', maxsplit=1) + [''])[1].strip().replace("'''", '').replace('//', '').replace('\t', '').split('\n')
+    comments = (text.split('\n', maxsplit=1) + [''])[1].strip().replace('"""', '').replace('//', '').replace('\t', '').split('\n')
     py_comments = '\n    '.join(comments)
     other_comments = '\n    '.join('// ' + line for line in comments if line)
     function_name = function_name.split(' ')[-1]
     params = params.split(')')[0]
     formatted_params = remove_datatypes(params)
 
-    python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):' + f"\n    '''{py_comments}'''" * (len(py_comments) != 0)
+    python = f'def {format_f_name(function_name, lang="py")}({formatted_params}):' + f'\n    """{py_comments}"""' * (len(py_comments) != 0)
     js = f'function {format_f_name(function_name)}({formatted_params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
     c_2plus = f'void {format_f_name(function_name)}({params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
     c_lang = f'#include <stdio.h>\nvoid {format_f_name(function_name)}({params})' + '{' + f'\n    {other_comments}' * (len(other_comments) != 0)
@@ -81,6 +79,11 @@ def generate():
     except ValueError:
         messagebox.showwarning('Некорректные данные',
             'Значения полей "Количество токенов" и "Температура генерации"\n должны быть числовыми')
+        correct_inputs = False
+
+    if n_tokens <= 0 or temperature_inp <= 0:
+        messagebox.showwarning('Некорректные данные',
+            'Значения полей "Количество токенов" и "Температура генерации"\n должны быть больше 0')
         correct_inputs = False
 
     input_seq = input_txt.get('1.0', END).strip()
@@ -127,11 +130,11 @@ def show_help():
     Show info about program in messagebox
     '''
     messagebox.showinfo('Помощь',
-                'Количество токенов это длина генерируемой\n'
-                'последовательности в символах (ограничено 999 символами)\n'
-                'Температура генерации это коэффициент случайности\n'
-                'генерации (меньшие значения соответствуют более\n'
-                'стабильной генерации).\n'
+                'Количество токенов это максимальное\n'
+                'количество токенов (ограничено 999 токенами)\n'
+                'Температура генерации это коэффициент вероятностного\n'
+                'распределения генерации (меньшие значения увеличивают\n'
+                'шанс зацикливания генерации).\n'
                 'Код выбранных языков программирования в процессе\n'
                 'генерации будет появляться в поле "Результат генерации"\n'
                 'Для получения результата генерации необходимо в поле\n'
@@ -146,6 +149,14 @@ root.title("Генерация кода")
 root.state('zoomed')
 root.minsize(1350, 700)
 root.iconbitmap(default="icons/main_logo.ico")
+
+# background_image = PhotoImage('icons/background.png')
+# background_label = Label(root, image=background_image)
+# background_label.place(x=0, y=0, relheight=1, relwidth=1)
+
+# background_image = ctk.CTkImage(Image.open(fp='icons/background.png'))
+# background_label = ctk.CTkLabel(master=root, image=background_image)
+# background_label.place(x=0, y=0, relheight=1, relwidth=1)
 
 parameters = ctk.CTkFrame(root)
 parameters.pack(fill=X, side=TOP)
