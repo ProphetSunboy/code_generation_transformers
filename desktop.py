@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import customtkinter as ctk
+from PIL import Image
 
 from codegen import generate_code
 
@@ -75,7 +76,8 @@ def generate():
     try:
         # slicing [:3] needed to limit input n_tokens
         n_tokens = int(number_of_tokens_entry.get().strip()[:3])
-        temperature_inp = round(float(temperature_entry.get().strip()), 2)
+        # min(100, ...) define that maximum value of temperature_inp is 100
+        temperature_inp = min(100, round(float(temperature_entry.get().strip()), 2))
     except ValueError:
         messagebox.showwarning('Некорректные данные',
             'Значения полей "Количество токенов" и "Температура генерации"\n должны быть числовыми')
@@ -131,14 +133,16 @@ def show_help():
     '''
     messagebox.showinfo('Помощь',
                 'Количество токенов это максимальное\n'
-                'количество токенов (ограничено 999 токенами)\n'
+                'количество токенов генерации (ограничено 999 токенами)\n'
                 'Температура генерации это коэффициент вероятностного\n'
                 'распределения генерации (меньшие значения увеличивают\n'
-                'шанс зацикливания генерации).\n'
-                'Код выбранных языков программирования в процессе\n'
-                'генерации будет появляться в поле "Результат генерации"\n'
+                'шанс зацикливания генерации, ограничение 100).\n'
+                'Код выбранных языков программирования после\n'
+                'генерации выводится в поле с результатами генерации\n'
                 'Для получения результата генерации необходимо в поле\n'
-                '"Введите функцию" ввести сигнатуру функции и нажать\n'
+                'ввода функции ввести сигнатуру функции, заполнить\n'
+                'поля "Количество токенов" и "Температура генерации",\n'
+                'выбрать языки программирования и нажать\n'
                 'на кнопку "Сгенерировать код".'
     )
 
@@ -150,15 +154,13 @@ root.state('zoomed')
 root.minsize(1350, 700)
 root.iconbitmap(default="icons/main_logo.ico")
 
-# background_image = PhotoImage('icons/background.png')
-# background_label = Label(root, image=background_image)
-# background_label.place(x=0, y=0, relheight=1, relwidth=1)
+background_image = ctk.CTkImage(light_image=Image.open('icons/background.png'),
+                                dark_image=Image.open('icons/background.png'),
+                                size=(1820, 1080))
+background_label = ctk.CTkLabel(root, image=background_image, text='')
+background_label.place(x=0, y=0, relheight=1, relwidth=1)
 
-# background_image = ctk.CTkImage(Image.open(fp='icons/background.png'))
-# background_label = ctk.CTkLabel(master=root, image=background_image)
-# background_label.place(x=0, y=0, relheight=1, relwidth=1)
-
-parameters = ctk.CTkFrame(root)
+parameters = ctk.CTkFrame(root) #, fg_color='#001987'
 parameters.pack(fill=X, side=TOP)
 
 number_of_tokens_label = ctk.CTkLabel(
@@ -171,7 +173,7 @@ number_of_tokens_label.pack(side=LEFT, anchor=NW, padx=(60, 0), pady=(10,10))
 number_of_tokens_entry = ctk.CTkEntry(
     parameters,
     font=('Roboto', 16),
-    width=40,
+    width=46,
 )
 number_of_tokens_entry.pack(side=LEFT,anchor=N, padx=0, pady=(10,10))
 
@@ -217,8 +219,8 @@ python_checkbutton.pack(side=RIGHT, anchor=N, padx=(0, 10), pady=(10,10))
 text_boxes = ctk.CTkFrame(root)
 text_boxes.pack(anchor=CENTER, pady=(80,0))
 
-input_frame = ctk.CTkFrame(text_boxes)
-output_frame = ctk.CTkFrame(text_boxes)
+input_frame = ctk.CTkFrame(text_boxes) #, fg_color='#001987'
+output_frame = ctk.CTkFrame(text_boxes) #, fg_color='#001987'
 
 input_frame.pack(side=LEFT)
 output_frame.pack(side=RIGHT, padx=(1, 0))
@@ -250,6 +252,7 @@ generate_button = ctk.CTkButton(
     width=120,
     height=48,
     corner_radius=45,
+    bg_color='#00104b',
     command=generate,
 )
 generate_button.pack(anchor=S, padx=(0, 0), pady=(10, 0))
@@ -261,6 +264,7 @@ help_button = ctk.CTkButton(
     width=32,
     height=24,
     corner_radius=45,
+    bg_color='#00104b',
     command=show_help,
 )
 help_button.pack(side=BOTTOM, anchor=SE, padx=(0, 10), pady=(0, 10))
