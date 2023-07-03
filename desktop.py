@@ -77,13 +77,13 @@ def generate():
         # slicing [:3] needed to limit input n_tokens
         n_tokens = int(number_of_tokens_entry.get().strip()[:3])
         # min(100, ...) define that maximum value of temperature_inp is 100
-        temperature_inp = min(100, round(float(temperature_entry.get().strip()), 2))
+        temperature_inp = min(2, round(float(temperature_entry.get().strip()), 2))
     except ValueError:
         messagebox.showwarning('Некорректные данные',
             'Значения полей "Количество токенов" и "Температура генерации"\n должны быть числовыми')
         correct_inputs = False
 
-    if n_tokens <= 0 or temperature_inp <= 0:
+    if n_tokens <= 0 or temperature_inp < 0:
         messagebox.showwarning('Некорректные данные',
             'Значения полей "Количество токенов" и "Температура генерации"\n должны быть больше 0')
         correct_inputs = False
@@ -135,8 +135,8 @@ def show_help():
                 'Количество токенов это максимальное\n'
                 'количество токенов генерации (ограничено 999 токенами)\n'
                 'Температура генерации это коэффициент вероятностного\n'
-                'распределения генерации (меньшие значения увеличивают\n'
-                'шанс зацикливания генерации, ограничение 100).\n'
+                'распределения генерации (меньшие значения соответствуют\n'
+                'стабильной генерации, ограничение 2).\n'
                 'Код выбранных языков программирования после\n'
                 'генерации выводится в поле с результатами генерации\n'
                 'Для получения результата генерации необходимо в поле\n'

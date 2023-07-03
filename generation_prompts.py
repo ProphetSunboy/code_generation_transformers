@@ -54,8 +54,8 @@ def binomial_coefficients(n, r):
 def generate_password(length):
 	"""Return randomly generated alphanumerical password with len length."""
         
-def generate_password_hash(password):
-    """Return hash of password."""
+def generate_password_hash(String password):
+    """Return the hash generated for the password."""
 
 def validate_email(email, reg):
 	"""Validate email using regular expression reg"""
